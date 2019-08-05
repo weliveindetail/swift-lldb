@@ -166,6 +166,10 @@ if(LLDB_INCLUDE_TESTS)
     endif()
   endif()
 
+  # BEGIN Swift Mods
+  list(APPEND LLDB_TEST_DEPS swift-syntax-generated-headers swift)
+  # END Swift Mods
+
   if(TARGET dsymutil)
     list(APPEND LLDB_TEST_DEPS dsymutil)
   endif()

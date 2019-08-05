@@ -514,9 +514,9 @@ bool ThreadPlanStepInRange::DefaultShouldStopHereImpl(Flags &flags,
       if (log && !should_stop_here)
         LLDB_LOGF(log,
                   "Stepping out of frame %s which did not match step into "
-                  "target %s.",
-                  sc.GetFunctionName().AsCString(),
-                  step_in_range_plan->m_step_into_target.AsCString());
+                  "target XXX.",
+                  sc.GetFunctionName().AsCString()); //,
+                  //step_in_range_plan->m_step_into_target.AsCString());
     }
   }
 

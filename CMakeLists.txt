@@ -168,6 +168,14 @@ if(LLDB_INCLUDE_TESTS)
 
   # BEGIN Swift Mods
   list(APPEND LLDB_TEST_DEPS swift-syntax-generated-headers swift)
+
+  # Hack: This is called from LLVM's root CMakeLists (when swift was
+  # configured). It should be fixed in swift.
+  function(fix_missing_swift_dependencies)
+    add_dependencies(swift-syntax-generated-headers clang)
+    add_dependencies(swiftReflection clang)
+    add_dependencies(swift swift-syntax-generated-headers)
+  endfunction()
   # END Swift Mods
 
   if(TARGET dsymutil)

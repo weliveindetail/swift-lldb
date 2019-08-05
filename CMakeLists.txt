@@ -133,40 +133,36 @@ if(LLDB_INCLUDE_TESTS)
     list(APPEND LLDB_TEST_DEPS repl_swift)
   endif()
 
-  # Add dependencies if we test with the in-tree clang.
-  # This works with standalone builds as they import the clang target.
-  if(TARGET clang)
-    list(APPEND LLDB_TEST_DEPS clang)
-    if(APPLE)
-      # If we build clang, we should build libcxx.
-      # FIXME: Standalone builds should import the cxx target as well.
-      if(LLDB_BUILT_STANDALONE)
-        # For now check that the include directory exists.
-        set(cxx_dir "${LLVM_BINARY_DIR}/include/c++")
-        if(NOT EXISTS ${cxx_dir})
-          message(WARNING "LLDB test suite requires libc++ in llvm/projects/libcxx or an existing build symlinked to ${cxx_dir}")
-        endif()
-      else()
-        # We require libcxx for the test suite, so if we aren't building it,
-        # try to provide a helpful error about how to resolve the situation.
-        if(NOT TARGET cxx)
-          if(LLVM_ENABLE_PROJECTS STREQUAL "")
-            # If `LLVM_ENABLE_PROJECTS` is not being used (implying that we are
-            # using the old layout), suggest checking it out.
-            message(FATAL_ERROR
-              "LLDB test suite requires libc++, but it is currently disabled. "
-              "Please checkout `libcxx` in `llvm/projects` or disable tests "
-              "via `LLDB_INCLUDE_TESTS=OFF`.")
-          else()
-            # If `LLVM_ENABLE_PROJECTS` is being used, suggest adding it.
-            message(FATAL_ERROR
-              "LLDB test suite requires libc++, but it is currently disabled. "
-              "Please add `libcxx` to `LLVM_ENABLE_PROJECTS` or disable tests "
-              "via `LLDB_INCLUDE_TESTS=OFF`.")
-          endif()
-        endif()
-        list(APPEND LLDB_TEST_DEPS cxx)
+  # We must have clang, either in-tree or as an imported target.
+  list(APPEND LLDB_TEST_DEPS clang)
+  if(APPLE)
+    # FIXME: Standalone builds should import the cxx target just like they import.
+    if(LLDB_BUILT_STANDALONE)
+      # For now check that the include directory exists.
+      set(cxx_dir "${LLVM_BINARY_DIR}/include/c++")
+      if(NOT EXISTS ${cxx_dir})
+        message(WARNING "LLDB test suite requires libc++ in llvm/projects/libcxx or an existing build symlinked to ${cxx_dir}")
       endif()
+    else()
+      # We require libcxx for the test suite, so if we aren't building it,
+      # try to provide a helpful error about how to resolve the situation.
+      if(NOT TARGET cxx)
+        if(LLVM_ENABLE_PROJECTS STREQUAL "")
+          # If `LLVM_ENABLE_PROJECTS` is not being used (implying that we are
+          # using the old layout), suggest checking it out.
+          message(FATAL_ERROR
+            "LLDB test suite requires libc++, but it is currently disabled. "
+            "Please checkout `libcxx` in `llvm/projects` or disable tests "
+            "via `LLDB_INCLUDE_TESTS=OFF`.")
+        else()
+          # If `LLVM_ENABLE_PROJECTS` is being used, suggest adding it.
+          message(FATAL_ERROR
+            "LLDB test suite requires libc++, but it is currently disabled. "
+            "Please add `libcxx` to `LLVM_ENABLE_PROJECTS` or disable tests "
+            "via `LLDB_INCLUDE_TESTS=OFF`.")
+        endif()
+      endif()
+      list(APPEND LLDB_TEST_DEPS cxx)
     endif()
   endif()
 
